@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Awsome-Oner-Of-PC
-Date                   :=16/11/16
+Date                   :=27/11/16
 CodeLitePath           :=/home/awsome-oner/.codelite
 LinkerName             :=/usr/bin/g++
 SharedObjectLinkerName :=/usr/bin/g++ -shared -fPIC
@@ -60,7 +60,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/block.cpp$(ObjectSuffix) $(IntermediateDirectory)/game.cpp$(ObjectSuffix) $(IntermediateDirectory)/sprite.cpp$(ObjectSuffix) $(IntermediateDirectory)/textureLoader.cpp$(ObjectSuffix) $(IntermediateDirectory)/window.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/block.cpp$(ObjectSuffix) $(IntermediateDirectory)/game.cpp$(ObjectSuffix) $(IntermediateDirectory)/sprite.cpp$(ObjectSuffix) $(IntermediateDirectory)/textureLoader.cpp$(ObjectSuffix) $(IntermediateDirectory)/window.cpp$(ObjectSuffix) $(IntermediateDirectory)/game_scene.cpp$(ObjectSuffix) 
 
 
 
@@ -138,6 +138,14 @@ $(IntermediateDirectory)/window.cpp$(DependSuffix): window.cpp
 
 $(IntermediateDirectory)/window.cpp$(PreprocessSuffix): window.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/window.cpp$(PreprocessSuffix)window.cpp
+
+$(IntermediateDirectory)/game_scene.cpp$(ObjectSuffix): game_scene.cpp $(IntermediateDirectory)/game_scene.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/awsome-oner/Documents/SDL Projects/FruitMatch/game_scene.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/game_scene.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/game_scene.cpp$(DependSuffix): game_scene.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/game_scene.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/game_scene.cpp$(DependSuffix) -MM game_scene.cpp
+
+$(IntermediateDirectory)/game_scene.cpp$(PreprocessSuffix): game_scene.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/game_scene.cpp$(PreprocessSuffix)game_scene.cpp
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

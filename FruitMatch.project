@@ -20,6 +20,8 @@
       <File Name="headers/sprite.h"/>
       <File Name="headers/textureLoader.h"/>
       <File Name="headers/window.h"/>
+      <File Name="headers/scene.h"/>
+      <File Name="headers/game_scene.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="resources/apple_block.png"/>
@@ -28,6 +30,7 @@
       <File Name="resources/orange_block.png"/>
       <File Name="resources/resin_block.png"/>
     </VirtualDirectory>
+    <File Name="game_scene.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
