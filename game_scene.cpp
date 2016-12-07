@@ -348,3 +348,8 @@ void GameScene::exit()
 		delete sprites[i];
 	}
 }
+
+void GameScene::goToScene(Scene*& activeScene)
+{
+	
+}

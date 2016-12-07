@@ -24,6 +24,7 @@ public:
 	virtual void handleInput(SDL_Event e);
 	virtual void render(Window* window);
 	virtual void exit();
+	virtual void goToScene(Scene*& activeScene);
 	
 	bool PreCalculatePositioning();
 	void CalculatePositioning();

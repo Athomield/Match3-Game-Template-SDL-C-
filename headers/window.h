@@ -20,13 +20,18 @@ class Window
 		void SetCamera(int x, int y, int w, int h);
 		SDL_Window* GetWindow() const;
 		SDL_Renderer* GetRenderer() const;
+		int GetWidth();
+		int GetHeight();
+		static int height,width;
+private:
+
 		
-	private:
 		const int mHeight = 640;
 		const int mWidth = 400;
 		SDL_Window* mWindow = NULL; //SDL window
 		SDL_Renderer* mRenderer = NULL; // Window renderer 
 		SDL_Rect mCamera ;
 };
+
 
 #endif

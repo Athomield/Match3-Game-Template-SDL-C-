@@ -22,6 +22,7 @@
       <File Name="headers/window.h"/>
       <File Name="headers/scene.h"/>
       <File Name="headers/game_scene.h"/>
+      <File Name="headers/landing_menu_scene.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="resources/apple_block.png"/>
@@ -31,6 +32,7 @@
       <File Name="resources/resin_block.png"/>
     </VirtualDirectory>
     <File Name="game_scene.cpp"/>
+    <File Name="landing_menu_scene.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
