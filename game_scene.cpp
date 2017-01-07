@@ -15,21 +15,27 @@ void GameScene::init()
 	srand(time(NULL));
 	doCalculations = true;
 	
+	gridWidth = 5;
+	gridHeight = 8;
+	
+	blockScaleFactor = 0.3f;
+	blockDimention = 200 * blockScaleFactor;
+	
 	blocksOffset = {50,150,0,0};
 	
-	for(int x = 0; x < 5;x++)
+	for(int x = 0; x < gridWidth;x++)
 	{
-		for (int y = 0; y < 7; y++)
+		for (int y = 0; y < gridHeight; y++)
 		{
-			AddSprite(new Sprite("../resources/empty_block.png",x * 60, y * 60, 0.3f));
+			AddSprite(new Sprite("../resources/empty_block.png",x * blockDimention, y * blockDimention, blockScaleFactor));
 		}
 	}
 	
-	for (int y = 0; y < 7; y++)
+	for (int y = 0; y < gridHeight; y++)
 	{
-		for (int x = 0; x < 5;x++)
+		for (int x = 0; x < gridWidth;x++)
 		{
-			Block* bta = new Block(x * 60, y * 60, 0.3f);
+			Block* bta = new Block(x * blockDimention, y * blockDimention, blockScaleFactor);
 			AddSprite(bta);
 			blocks.push_back(bta); 
 			
@@ -42,47 +48,46 @@ void GameScene::init()
 bool GameScene::PreCalculatePositioning() //This function checks for matches after a switch of two blocks
 									//returns true if there are any
 {
-	bool test = false;
-	for (int y = 0; y < 7; y++)
+	for (int y = 0; y < gridHeight; y++)
 	{
-		for (int x = 0; x < 5;x++)
+		for (int x = 0; x < gridWidth;x++)
 		{
 			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
 			if(GetBlockAt(x,y) != NULL && GetBlockAt(x+1,y) != NULL && GetBlockAt(x+2,y) != NULL )
 			{
 				if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+2,y)->GetType())
 				{
-					test = true;
+					return true;
 				}
 			}
 		}
 	}
 	
 	//Vertical Check
-	for (int x = 0; x < 5;x++)
+	for (int x = 0; x < gridWidth;x++)
 	{
-		for (int y = 0; y < 7; y++)
+		for (int y = 0; y < gridHeight; y++)
 		{
 			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
 			if(GetBlockAt(x,y) != NULL && GetBlockAt(x,y+1) != NULL && GetBlockAt(x,y+2) != NULL )
 			{
 				if(GetBlockAt(x,y)->GetType() == GetBlockAt(x,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x,y+2)->GetType())
 				{
-					test = true;
+					return true;
 				}
 			}
 		}
 	}
 	
-	return test;
+	return false;
 }
 
 void GameScene::CalculatePositioning()
 {
 		//Horizontal Check
-	for (int y = 0; y < 7; y++)
+	for (int y = 0; y < gridHeight; y++)
 	{
-		for (int x = 0; x < 5;x++)
+		for (int x = 0; x < gridWidth;x++)
 		{
 			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
 			if(GetBlockAt(x,y) != NULL && GetBlockAt(x+1,y) != NULL && GetBlockAt(x+2,y) != NULL )
@@ -102,9 +107,9 @@ void GameScene::CalculatePositioning()
 	}
 	
 	//Vertical Check
-	for (int x = 0; x < 5;x++)
+	for (int x = 0; x < gridWidth;x++)
 	{
-		for (int y = 0; y < 7; y++)
+		for (int y = 0; y < gridHeight; y++)
 		{
 			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
 			if(GetBlockAt(x,y) != NULL && GetBlockAt(x,y+1) != NULL && GetBlockAt(x,y+2) != NULL )
@@ -133,11 +138,11 @@ void GameScene::update(double deltaTime)
 	
 	for (int y = -7; y < -6; y++)//Generate blocks off-screen that will fall from up-top
 	{
-		for (int x = 0; x < 5;x++)
+		for (int x = 0; x < gridWidth;x++)
 		{
 			if(GetBlockAt(x,y) == NULL)
 			{
-				Block* bta = new Block(x * 60, y * 60, 0.3f);
+				Block* bta = new Block(x * blockDimention, y * blockDimention, blockScaleFactor);
 				AddSprite(bta);
 				blocks.push_back(bta); 
 				bta = NULL;
@@ -145,16 +150,16 @@ void GameScene::update(double deltaTime)
 		}
 	}
 	
-	for (int y = 5; y >= -7; y--) //line before last
+	for (int y = gridHeight-2; y >= -7; y--) //line before last
 	{
-		for (int x = 4; x >= 0;x--)
+		for (int x = gridWidth-1; x >= 0;x--)
 		{
 			if(GetBlockAt(x,y) != NULL)
 			{
 				int k = 0;
-				while(GetBlockAt(x,y+k+1) == NULL && y+k+1 != 7)
+				while(GetBlockAt(x,y+k+1) == NULL && y+k+1 != gridHeight) //god knows why it's y+k+1 but works
 				{
-					if(y < 7 - k)
+					if(y < gridHeight - k)
 						k++;
 				}
 				GetBlockAt(x,y)->SetDesiredPos(x * GetBlockAt(x,y)->GetTransformRect()->w, (y+k)*GetBlockAt(x,y)->GetTransformRect()->h);

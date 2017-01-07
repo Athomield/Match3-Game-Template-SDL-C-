@@ -31,6 +31,12 @@ public:
 	Block* GetBlockAt(int x, int y);
 	void AddSprite(Sprite* sta);
 	void DeleteSprite(Sprite* std);
+	
+	int gridWidth;
+	int gridHeight;
+	
+	int blockDimention;
+	float blockScaleFactor;
 };
 
 #endif
