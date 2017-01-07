@@ -24,12 +24,19 @@ public:
 	virtual void handleInput(SDL_Event e);
 	virtual void render(Window* window);
 	virtual void exit();
+	virtual void goToScene(Scene*& activeScene);
 	
 	bool PreCalculatePositioning();
 	void CalculatePositioning();
 	Block* GetBlockAt(int x, int y);
 	void AddSprite(Sprite* sta);
 	void DeleteSprite(Sprite* std);
+	
+	int gridWidth;
+	int gridHeight;
+	
+	int blockDimention;
+	float blockScaleFactor;
 };
 
 #endif

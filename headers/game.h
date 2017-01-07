@@ -4,6 +4,7 @@
 #include <vector> 
 #include "scene.h"
 #include "game_scene.h"
+#include "landing_menu_scene.h"
 
 class Window;
 

@@ -1,8 +1,13 @@
 #include "headers/window.h"
 
+int Window::height;
+int Window::width;
+
 Window::Window()
 {
 	Init();
+	Window::height = 640;
+	Window::width = 400;
 	mCamera = {0,0,640,480};
 	TextureLoader::Instance()->SetWindow(this);
 }
@@ -91,4 +96,18 @@ void Window::SetCamera(int x,int y, int w, int h)
 SDL_Renderer* Window::GetRenderer() const
 {
 	return mRenderer;
+}
+
+int Window::GetWidth()
+{
+	int x,y;
+	SDL_GetWindowSize(mWindow,&x,&y);
+	return x;
+}
+
+int Window::GetHeight()
+{
+	int x,y;
+	SDL_GetWindowSize(mWindow,&x,&y);
+	return y;
 }

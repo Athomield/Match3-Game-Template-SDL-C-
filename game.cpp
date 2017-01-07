@@ -4,7 +4,7 @@ Game::Game()
 {
 	//srand(time(NULL));
 	mWindow = new Window();
-	mScene = new GameScene();
+	mScene = new LandingMenuScene();
 	mScene->init();
 	//doCalculations = true;
 	
@@ -228,7 +228,7 @@ void Game::Update()
 		HandleEvents(&quit);
 		
 		mScene->update(deltaTime);
-		
+		mScene->goToScene(mScene);
 //		for(int i = 0; i < blocks.size();i++)
 //		{
 //			blocks[i]->Update(deltaTime);
