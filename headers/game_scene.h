@@ -29,6 +29,7 @@ public:
 	bool PreCalculatePositioning();
 	void CalculatePositioning();
 	Block* GetBlockAt(int x, int y);
+	void CheckBottomSides(Block* block);
 	void AddSprite(Sprite* sta);
 	void DeleteSprite(Sprite* std);
 	

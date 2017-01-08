@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="210mm"
@@ -17,7 +18,31 @@
    inkscape:version="0.91 r13725"
    sodipodi:docname="art.svg">
   <defs
-     id="defs4" />
+     id="defs4">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4175">
+      <stop
+         style="stop-color:#6affff;stop-opacity:1;"
+         offset="0"
+         id="stop4177" />
+      <stop
+         style="stop-color:#6a77ff;stop-opacity:0"
+         offset="1"
+         id="stop4179" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4175"
+       id="radialGradient4181"
+       cx="312.46423"
+       cy="701.95459"
+       fx="312.46423"
+       fy="701.95459"
+       r="85.714287"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.4831545,0.0156251,-0.01562513,1.4831581,-140.00039,-344.03737)" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -25,16 +50,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="250.31299"
-     inkscape:cy="805.48804"
+     inkscape:zoom="1.979899"
+     inkscape:cx="262.95058"
+     inkscape:cy="385.88911"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1366"
-     inkscape:window-height="705"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-width="1301"
+     inkscape:window-height="744"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -297,5 +322,21 @@
        cx="402.06293"
        id="ellipse4185"
        style="opacity:1;fill:#692444;fill-opacity:1;stroke:none;stroke-width:9.30000019;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       inkscape:export-ydpi="99.631088"
+       inkscape:export-xdpi="99.631088"
+       inkscape:export-filename="/home/awsome-oner/Documents/SDL Projects/FruitMatch/resources/static_block.png"
+       style="opacity:1;fill:#e0e6e7;fill-opacity:1;stroke:#4e6167;stroke-width:4.9;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4169"
+       width="175.76654"
+       height="175.76654"
+       x="224.58098"
+       y="614.07135" />
+    <circle
+       style="fill:url(#radialGradient4181);fill-opacity:1;stroke:none;stroke-opacity:1"
+       id="path4173"
+       cx="312.46423"
+       cy="701.95459"
+       r="85.714287" />
   </g>
 </svg>

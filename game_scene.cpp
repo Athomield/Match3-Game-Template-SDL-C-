@@ -9,14 +9,13 @@ GameScene::~GameScene()
 	exit();
 }
 
-
 void GameScene::init()
 {
 	srand(time(NULL));
 	doCalculations = true;
 	
-	gridWidth = 5;
-	gridHeight = 8;
+	gridWidth = 4;
+	gridHeight = 5;
 	
 	blockScaleFactor = 0.3f;
 	blockDimention = 200 * blockScaleFactor;
@@ -35,11 +34,23 @@ void GameScene::init()
 	{
 		for (int x = 0; x < gridWidth;x++)
 		{
-			Block* bta = new Block(x * blockDimention, y * blockDimention, blockScaleFactor);
-			AddSprite(bta);
-			blocks.push_back(bta); 
+			if((x == 0 || x == 3) && (y == 1 || y == 3))
+			{
+				Block* bta = new Block(x * blockDimention, y * blockDimention, blockScaleFactor,Block::SpawnType::SpawnStatic);
+				AddSprite(bta);
+				blocks.push_back(bta); 
+				
+				bta = NULL;
+			}
+			else
+			{
+				Block* bta = new Block(x * blockDimention, y * blockDimention, blockScaleFactor);
+				AddSprite(bta);
+				blocks.push_back(bta); 
+				
+				bta = NULL;
+			}
 			
-			bta = NULL;
 		}
 	}
 
@@ -162,7 +173,9 @@ void GameScene::update(double deltaTime)
 					if(y < gridHeight - k)
 						k++;
 				}
-				GetBlockAt(x,y)->SetDesiredPos(x * GetBlockAt(x,y)->GetTransformRect()->w, (y+k)*GetBlockAt(x,y)->GetTransformRect()->h);
+				
+				if(GetBlockAt(x,y)->GetType()!= Block::Type::Static) //empty blocks are static, they do not need a destination position
+					GetBlockAt(x,y)->SetDesiredPos(x * GetBlockAt(x,y)->GetTransformRect()->w, (y+k)*GetBlockAt(x,y)->GetTransformRect()->h);
 			
 			}
 		}
@@ -181,6 +194,11 @@ void GameScene::update(double deltaTime)
 	if(doCalculations)
 	{
 		CalculatePositioning();
+		
+		for(int i = 0; i < blocks.size(); i++)
+		{
+			CheckBottomSides(blocks[i]);
+		}
 	}
 }
 
@@ -213,54 +231,41 @@ void GameScene::handleInput(SDL_Event e)
 		{
 			if(blocks[i] != NULL)
 			{
-				if(x > blocks[i]->GetDesiredXPos() + blocksOffset.x && x < blocks[i]->GetDesiredXPos() + blocksOffset.x + blocks[i]->GetTransformRect()->w
-				&& y > blocks[i]->GetDesiredYPos() + blocksOffset.y && y < blocks[i]->GetDesiredYPos() + blocksOffset.y + blocks[i]->GetTransformRect()->h)
+				if(blocks[i]->GetType() != Block::Type::Static &&
+					blocks[i]->GetYCoord() >= 0)
 				{
-					//std::cout << "Clicked on " << blocks[i]->GetDesiredXPos() << "," << blocks[i]->GetDesiredYPos() << std::endl;
-					
-					if(block1 == NULL)
+					if(x > blocks[i]->GetDesiredXPos() + blocksOffset.x && x < blocks[i]->GetDesiredXPos() + blocksOffset.x + blocks[i]->GetTransformRect()->w
+					&& y > blocks[i]->GetDesiredYPos() + blocksOffset.y && y < blocks[i]->GetDesiredYPos() + blocksOffset.y + blocks[i]->GetTransformRect()->h)
 					{
-						block1 = blocks[i];
-						std::cout << "B1 " << block1->GetXCoord() << "," << block1->GetYCoord() << " SET " << std::endl;
-						break;
-					}
-					else if(block2 == NULL && block1 != NULL)
-					{
-						block2 = blocks[i];
-						std::cout << "B2 " << block2->GetXCoord() << "," << block2->GetYCoord() << " SET " << std::endl;
-
-						if(
-						(block2->GetXCoord() == block1->GetXCoord() + 1 && 
-						block2->GetYCoord() == block1->GetYCoord()) || 
+						//std::cout << "Clicked on " << blocks[i]->GetDesiredXPos() << "," << blocks[i]->GetDesiredYPos() << std::endl;
 						
-						(block2->GetXCoord() == block1->GetXCoord() - 1 && 
-						block2->GetYCoord() == block1->GetYCoord()) || 
-						
-						(block2->GetYCoord() == block1->GetYCoord() + 1 && 
-						block2->GetXCoord() == block1->GetXCoord()) || 
-						
-						(block2->GetYCoord() == block1->GetYCoord() - 1 &&
-						block2->GetXCoord() == block1->GetXCoord())
-						)
+						if(block1 == NULL)
 						{
-							std::cout << "Switching" << std::endl;
-							int x = block2->GetXPos();
-							int y = block2->GetYPos();
-							block2->SetPos(block1->GetXPos(), block1->GetYPos());
-							block2->SetDesiredPos(block1->GetXPos(), block1->GetYPos());
+							block1 = blocks[i];
+							std::cout << "B1 " << block1->GetXCoord() << "," << block1->GetYCoord() << " SET " << std::endl;
 							
-							block1->SetPos(x,y);
-							block1->SetDesiredPos(x,y);
+							break;
+						}
+						else if(block2 == NULL && block1 != NULL)
+						{
+							block2 = blocks[i];
+							std::cout << "B2 " << block2->GetXCoord() << "," << block2->GetYCoord() << " SET " << std::endl;
+
+							if(
+							(block2->GetXCoord() == block1->GetXCoord() + 1 && 
+							block2->GetYCoord() == block1->GetYCoord()) || 
 							
-							if(PreCalculatePositioning() == true)
+							(block2->GetXCoord() == block1->GetXCoord() - 1 && 
+							block2->GetYCoord() == block1->GetYCoord()) || 
+							
+							(block2->GetYCoord() == block1->GetYCoord() + 1 && 
+							block2->GetXCoord() == block1->GetXCoord()) || 
+							
+							(block2->GetYCoord() == block1->GetYCoord() - 1 &&
+							block2->GetXCoord() == block1->GetXCoord())
+							)
 							{
-								block1 = NULL;
-								block2 = NULL;
-								break;
-							}
-							else 
-							{
-								std::cout << "No matches found" << std::endl;
+								std::cout << "Switching" << std::endl;
 								int x = block2->GetXPos();
 								int y = block2->GetYPos();
 								block2->SetPos(block1->GetXPos(), block1->GetYPos());
@@ -269,19 +274,37 @@ void GameScene::handleInput(SDL_Event e)
 								block1->SetPos(x,y);
 								block1->SetDesiredPos(x,y);
 								
+								if(PreCalculatePositioning() == true)
+								{
+									block1 = NULL;
+									block2 = NULL;
+									break;
+								}
+								else 
+								{
+									std::cout << "No matches found" << std::endl;
+									int x = block2->GetXPos();
+									int y = block2->GetYPos();
+									block2->SetPos(block1->GetXPos(), block1->GetYPos());
+									block2->SetDesiredPos(block1->GetXPos(), block1->GetYPos());
+									
+									block1->SetPos(x,y);
+									block1->SetDesiredPos(x,y);
+									
+									block1 = NULL;
+									block2 = NULL;
+								}
+							}
+							else
+							{
+								std::cout << "Block out of bounds" << std::endl;
+
 								block1 = NULL;
 								block2 = NULL;
+								break;
 							}
-						}
-						else
-						{
-							std::cout << "Block out of bounds" << std::endl;
 
-							block1 = NULL;
-							block2 = NULL;
-							break;
 						}
-
 					}
 				}
 			}
@@ -291,6 +314,59 @@ void GameScene::handleInput(SDL_Event e)
 	for(int i = 0; i < sprites.size(); i++)
 	{
 		sprites[i]->HandleEvents(e);
+	}
+}
+
+void GameScene::CheckBottomSides(Block* block) //if the block is empty and you must get
+{
+	/*
+	if( (GetBlockAt(block->GetXCoord()-1,block->GetYCoord()+1) == NULL)
+		&& (GetBlockAt(block->GetXCoord(),block->GetYCoord()+1) != NULL))
+		{
+			if(block->GetXCoord() > 0)
+			{
+				block->SetDesiredPos(block->GetXCoord()-1,block->GetYCoord()+1);
+				std::cout << "Found one" << std::endl;
+			}
+			
+		}
+	else if( (GetBlockAt(block->GetXCoord()+1,block->GetYCoord()+1) == NULL)
+		&& (GetBlockAt(block->GetXCoord(),block->GetYCoord()+1) != NULL) )
+		{
+			if(block->GetXCoord() < gridWidth -1)
+			{	
+				block->SetDesiredPos(block->GetXCoord()+1,block->GetYCoord()+1);
+			}
+		}
+	*/
+	
+	if (GetBlockAt(block->GetXCoord()-1,block->GetYCoord()) != NULL)
+	{	
+		if(GetBlockAt(block->GetXCoord()-1,block->GetYCoord())->GetType()
+			== Block::Type::Static)
+		{
+			if(GetBlockAt(block->GetXCoord()-1,block->GetYCoord()+1) == NULL 
+			&& block->GetYCoord() < gridHeight - 1)
+			{
+				block->SetDesiredPos(block->GetXPos()-block->GetTransformRect()->w
+				,block->GetYPos()+block->GetTransformRect()->h);
+			}
+		}
+	}
+	
+	if(GetBlockAt(block->GetXCoord()+1,block->GetYCoord()) != NULL)
+	{
+		if(GetBlockAt(block->GetXCoord()+1,block->GetYCoord())->GetType()
+			== Block::Type::Static)
+		{
+			if(GetBlockAt(block->GetXCoord()+1,block->GetYCoord()+1) == NULL 
+			&& block->GetYCoord() < gridHeight - 1)
+			{
+				block->SetDesiredPos(block->GetXPos()+block->GetTransformRect()->w
+				,block->GetYPos()+block->GetTransformRect()->h);
+				std::cout << "Found one " << std::endl;
+			}
+		}
 	}
 }
 
