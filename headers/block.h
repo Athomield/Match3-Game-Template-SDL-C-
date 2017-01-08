@@ -9,8 +9,8 @@
 class Block : public Sprite
 {
 	public:
-		enum Type {Apple,Banana,Orange,Grape};
-		
+		enum Type {Apple,Banana,Orange,Grape,Static};
+		enum SpawnType {SpawnRandom,SpawnStatic};
 	private:
 		Type mType;
 		int desiredXPos, desiredYPos;
@@ -21,7 +21,7 @@ class Block : public Sprite
 		
 		Uint32 animationTimer;
 	public:
-		Block(int x, int y, float scale);
+		Block(int x, int y, float scale,SpawnType spawnType = SpawnRandom);
 		void SetDesiredPos(int x, int y);
 
 		virtual void Update(double deltaTime);
