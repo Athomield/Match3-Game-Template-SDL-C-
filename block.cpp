@@ -30,7 +30,7 @@ Block::Block(int x, int y, float scale,SpawnType spawnType) : Sprite("../resourc
 		SetTexture("../resources/static_block.png");
 		mType = Static;
 	}
-	
+	mZIndex = Index_Normal;
 	mX = x;
 	mY = y;
 	desiredXPos = x;

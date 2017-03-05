@@ -14,19 +14,36 @@ void GameScene::init()
 	srand(time(NULL));
 	doCalculations = true;
 	
-	gridWidth = 4;
-	gridHeight = 5;
+	gridWidth = mGameMode.GetWidth();
+	gridHeight = mGameMode.GetHeight();
 	
 	blockScaleFactor = 0.3f;
 	blockDimention = 200 * blockScaleFactor;
 	
 	blocksOffset = {50,150,0,0};
 	
+		
+	for (int x = 0; x < 3; x++) //Spawning background first works, otherwise it will cause issues
+	{
+		for (int y = 0; y < 3; y++)
+		{
+			mBackgroundSprite = new Sprite("../resources/tileable_game_background.png",
+			x*256,y*256, .5);
+			mBackgroundSprite->SetZIndex(Sprite::LayerDepthIndex::Index_Background);
+			mBackgroundSprite->SetOffset(-25,-25);
+			AddSprite(mBackgroundSprite);
+		}
+	}
+	
 	for(int x = 0; x < gridWidth;x++)
 	{
 		for (int y = 0; y < gridHeight; y++)
 		{
-			AddSprite(new Sprite("../resources/empty_block.png",x * blockDimention, y * blockDimention, blockScaleFactor));
+			Sprite* emptyBlock = new Sprite("../resources/empty_block.png",x * blockDimention, y * blockDimention, blockScaleFactor);
+			emptyBlock->SetOffset(blocksOffset.x,blocksOffset.y);
+			emptyBlock->SetZIndex(Sprite::LayerDepthIndex::Index_ForeBackground);
+			AddSprite(emptyBlock);
+			emptyBlock = NULL;
 		}
 	}
 	
@@ -34,9 +51,10 @@ void GameScene::init()
 	{
 		for (int x = 0; x < gridWidth;x++)
 		{
-			if((x == 0 || x == 3) && (y == 1 || y == 3))
+			if((x == 0 || x == 3) && (y == 1 || y == 3) && true)
 			{
 				Block* bta = new Block(x * blockDimention, y * blockDimention, blockScaleFactor,Block::SpawnType::SpawnStatic);
+				bta->SetOffset(blocksOffset.x,blocksOffset.y);
 				AddSprite(bta);
 				blocks.push_back(bta); 
 				
@@ -45,6 +63,7 @@ void GameScene::init()
 			else
 			{
 				Block* bta = new Block(x * blockDimention, y * blockDimention, blockScaleFactor);
+				bta->SetOffset(blocksOffset.x,blocksOffset.y);
 				AddSprite(bta);
 				blocks.push_back(bta); 
 				
@@ -53,7 +72,18 @@ void GameScene::init()
 			
 		}
 	}
-
+	
+	scoreLabel = new Label("0");
+	scoreLabel->SetPos(250,50);
+	AddSprite(scoreLabel);
+	
+	movesLabel = new Label("0");
+	movesLabel->SetPos(250,80);
+	AddSprite(movesLabel);
+	
+	timerLabel = new Label("0");
+	timerLabel->SetPos(250,110);
+	AddSprite(timerLabel);
 }
 
 bool GameScene::PreCalculatePositioning() //This function checks for matches after a switch of two blocks
@@ -95,7 +125,7 @@ bool GameScene::PreCalculatePositioning() //This function checks for matches aft
 
 void GameScene::CalculatePositioning()
 {
-		//Horizontal Check
+	//Horizontal Check
 	for (int y = 0; y < gridHeight; y++)
 	{
 		for (int x = 0; x < gridWidth;x++)
@@ -112,6 +142,15 @@ void GameScene::CalculatePositioning()
 					DeleteSprite(GetBlockAt(x,y));
 					DeleteSprite(GetBlockAt(x+1,y));
 					DeleteSprite(GetBlockAt(x+2,y));
+					
+					std::cout << "Combo:" << mGameMode.GetCombo() << std::endl;
+					std::cout << "Score:" << mGameMode.GetBlockScore()*2
+					+(int)(mGameMode.GetCombo()*mGameMode.GetBlockScore()) << std::endl;
+					
+					mGameMode.ModifyScore(mGameMode.GetBlockScore()*2
+					+(int)(mGameMode.GetCombo()*mGameMode.GetBlockScore()));
+					
+					mGameMode.ModifyCombo(0.5f);
 				}
 			}
 		}
@@ -134,6 +173,16 @@ void GameScene::CalculatePositioning()
 					DeleteSprite(GetBlockAt(x,y));
 					DeleteSprite(GetBlockAt(x,y+1));
 					DeleteSprite(GetBlockAt(x,y+2));
+					
+					std::cout << "Combo:" << mGameMode.GetCombo() << std::endl;
+					std::cout << "Score:" << mGameMode.GetBlockScore()*2
+					+(int)(mGameMode.GetCombo()*mGameMode.GetBlockScore()) << std::endl;
+					
+					
+					mGameMode.ModifyScore(mGameMode.GetBlockScore()*2
+					+(int)(mGameMode.GetCombo()*mGameMode.GetBlockScore()));
+					
+					mGameMode.ModifyCombo(0.5f);
 				}
 			}
 		}
@@ -142,6 +191,15 @@ void GameScene::CalculatePositioning()
 
 void GameScene::update(double deltaTime)
 {
+	scoreLabel->SetText(std::to_string(mGameMode.GetCurrentScore()));
+	movesLabel->SetText(std::to_string(mGameMode.GetCurrentMoves()));
+	timerLabel->SetText(std::to_string(mGameMode.GetCurrentTimer()));
+	
+	mGameMode.Update(deltaTime);
+	
+	if(!PreCalculateMoves())
+		std::cout << "No more moves !!" << std::endl;
+	
 	for(int i = 0; i < blocks.size();i++)
 	{
 		blocks[i]->Update(deltaTime);
@@ -154,6 +212,7 @@ void GameScene::update(double deltaTime)
 			if(GetBlockAt(x,y) == NULL)
 			{
 				Block* bta = new Block(x * blockDimention, y * blockDimention, blockScaleFactor);
+				bta->SetOffset(blocksOffset.x,blocksOffset.y);
 				AddSprite(bta);
 				blocks.push_back(bta); 
 				bta = NULL;
@@ -213,7 +272,7 @@ void GameScene::render(Window* window)
 		SDL_Rect adjustedRect = {sprites[i]->GetTransformRect()->x + blocksOffset.x,sprites[i]->GetTransformRect()->y + blocksOffset.y,
 		sprites[i]->GetTransformRect()->w,sprites[i]->GetTransformRect()->h};
 		
-		SDL_RenderCopy( window->GetRenderer(),sprites[i]->GetTexture(),NULL,&adjustedRect); 
+		SDL_RenderCopy( window->GetRenderer(),sprites[i]->GetTexture(),NULL,(sprites[i]->GetTransformRect())); 
 	}
 	//Update screen
 	SDL_RenderPresent( window->GetRenderer() );
@@ -265,7 +324,9 @@ void GameScene::handleInput(SDL_Event e)
 							block2->GetXCoord() == block1->GetXCoord())
 							)
 							{
-								std::cout << "Switching" << std::endl;
+								
+								std::cout << "Switching:"  << std::endl;
+								
 								int x = block2->GetXPos();
 								int y = block2->GetYPos();
 								block2->SetPos(block1->GetXPos(), block1->GetYPos());
@@ -276,11 +337,14 @@ void GameScene::handleInput(SDL_Event e)
 								
 								if(PreCalculatePositioning() == true)
 								{
+									mGameMode.DecrementMoves();
+									mGameMode.ResetCombo();
+									std::cout << "________________________________________" << std::endl;
 									block1 = NULL;
 									block2 = NULL;
 									break;
 								}
-								else 
+								else
 								{
 									std::cout << "No matches found" << std::endl;
 									int x = block2->GetXPos();
@@ -315,6 +379,254 @@ void GameScene::handleInput(SDL_Event e)
 	{
 		sprites[i]->HandleEvents(e);
 	}
+}
+
+bool GameScene::PreCalculateMoves()
+{
+	//Horizontal Check
+	for (int y = 0; y < gridHeight; y++)
+	{
+		for (int x = 0; x < gridWidth;x++)
+		{
+			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
+			if(GetBlockAt(x,y+1) != NULL)
+			{
+				if(GetBlockAt(x,y+1)->GetType() != Block::Type::Static)
+				{
+					//*
+					// **
+					if(GetBlockAt(x,y) != NULL && GetBlockAt(x+1,y+1) != NULL && GetBlockAt(x+2,y+1) != NULL )
+					{
+						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+2,y+1)->GetType())
+						{
+							return true;
+						}
+					}
+					
+					// *
+					//* *
+					if(GetBlockAt(x,y) != NULL && GetBlockAt(x-1,y+1) != NULL && GetBlockAt(x+1,y+1) != NULL )
+					{
+						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+1)->GetType())
+						{
+							return true;
+						}
+					}
+					
+					//  *
+					//**
+					if(GetBlockAt(x,y) != NULL && GetBlockAt(x-1,y+1) != NULL && GetBlockAt(x-2,y+1) != NULL )
+					{
+						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-2,y+1)->GetType())
+						{
+							return true;
+						}
+					}
+				}
+			}
+			
+			if(GetBlockAt(x,y-1) != NULL)
+			{
+				if(GetBlockAt(x,y-1)->GetType() != Block::Type::Static)
+				{
+					if(y-1 >= 0)
+					{
+						//** 
+						//  *
+						if(GetBlockAt(x,y) != NULL && GetBlockAt(x-1,y-1) != NULL && GetBlockAt(x-2,y-1) != NULL )
+						{
+							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-2,y-1)->GetType())
+							{
+								return true;
+							}
+						}
+						
+										
+						// **
+						//*
+						if(GetBlockAt(x,y) != NULL && GetBlockAt(x+1,y-1) != NULL && GetBlockAt(x+2,y-1) != NULL )
+						{
+							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+2,y-1)->GetType())
+							{
+								return true;
+							}
+						}
+						
+						//* *
+						// *
+						if(GetBlockAt(x,y) != NULL && GetBlockAt(x-1,y-1) != NULL && GetBlockAt(x+1,y-1) != NULL )
+						{
+							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-1)->GetType())
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			
+			if(GetBlockAt(x-1,y) != NULL)
+			{
+				if(GetBlockAt(x-1,y)->GetType() != Block::Type::Static)
+				{
+					//** *
+					if(GetBlockAt(x,y) != NULL && GetBlockAt(x-2,y) != NULL && GetBlockAt(x-3,y) != NULL )
+					{
+						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-2,y)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-3,y)->GetType())
+						{
+							return true;
+						}
+					}
+				}
+			}
+			if(GetBlockAt(x+1,y) != NULL)
+			{
+				if(GetBlockAt(x+1,y)->GetType() != Block::Type::Static)
+				{
+					//* **
+					if(GetBlockAt(x,y) != NULL && GetBlockAt(x+2,y) != NULL && GetBlockAt(x+3,y) != NULL )
+					{
+						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+2,y)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+3,y)->GetType())
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	//Vertical Check
+	for (int x = 0; x < gridWidth;x++)
+	{
+		for (int y = 0; y < gridHeight; y++)
+		{
+			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
+			if(GetBlockAt(x+1,y) != NULL)
+			{
+				if(GetBlockAt(x+1,y)->GetType() != Block::Type::Static)
+				{
+					//*
+					// *
+					// *
+					if(GetBlockAt(x,y) != NULL && GetBlockAt(x+1,y+1) != NULL && GetBlockAt(x+1,y+2) != NULL )
+					{
+						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+2)->GetType())
+						{
+							return true;
+						}
+					}
+					
+					if(y-1 >= 0)
+					{
+						// *
+						//*
+						// *
+						if(GetBlockAt(x,y) != NULL && GetBlockAt(x+1,y+1) != NULL && GetBlockAt(x+1,y-1) != NULL )
+						{
+							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-1)->GetType())
+							{
+								return true;
+							}
+						}
+						
+						// *
+						// *
+						//*
+						if(GetBlockAt(x,y) != NULL && GetBlockAt(x+1,y-2) != NULL && GetBlockAt(x+1,y-1) != NULL )
+						{
+							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-2)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-1)->GetType())
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			
+			if(GetBlockAt(x-1,y) != NULL)
+			{
+				if(GetBlockAt(x-1,y)->GetType() != Block::Type::Static)
+				{
+					// *
+					//*
+					//*
+					if(GetBlockAt(x,y) != NULL && GetBlockAt(x-1,y+1) != NULL && GetBlockAt(x-1,y+2) != NULL )
+					{
+						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+2)->GetType())
+						{
+							return true;
+						}
+					}
+					
+					if(y-1 >= 0)
+					{
+						//*
+						// *
+						//*
+						if(GetBlockAt(x,y) != NULL && GetBlockAt(x-1,y+1) != NULL && GetBlockAt(x-1,y-1) != NULL )
+						{
+							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-1)->GetType())
+							{
+								return true;
+							}
+						}
+						
+						//*
+						//*
+						// *
+						if(GetBlockAt(x,y) != NULL && GetBlockAt(x-1,y-2) != NULL && GetBlockAt(x-1,y-1) != NULL )
+						{
+							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-2)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-1)->GetType())
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			if(GetBlockAt(x,y-1) != NULL)
+			{
+				if(GetBlockAt(x,y-1)->GetType() != Block::Type::Static)
+				{
+					if(y-1 >= 0 && y-2 >= 0 && y-3 >= 0)
+					{
+						//*
+						//*
+						//
+						//*
+						if(GetBlockAt(x,y) != NULL && GetBlockAt(x,y-2) != NULL && GetBlockAt(x,y-3) != NULL )
+						{
+							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x,y-2)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x,y-3)->GetType())
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			
+			if(GetBlockAt(x,y+1) != NULL)
+			{
+				if(GetBlockAt(x,y+1)->GetType() != Block::Type::Static)
+				{
+					//*
+					//
+					//*
+					//*			
+					if(GetBlockAt(x,y) != NULL && GetBlockAt(x,y+2) != NULL && GetBlockAt(x,y+3) != NULL )
+					{
+						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x,y+2)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x,y+3)->GetType())
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	return false;
 }
 
 void GameScene::CheckBottomSides(Block* block) //if the block is empty and you must get
@@ -395,7 +707,45 @@ Block* GameScene::GetBlockAt(int x, int y)
 
 void GameScene::AddSprite(Sprite* sta)
 {
-	sprites.push_back(sta);
+	int spriteCount = sprites.size();
+	
+	//std::cout << spriteCount << std::endl;
+	
+	for(int i = 0; i<spriteCount ; i++)
+	{
+		std::cout << "Block: (" << sprites[i]->GetTransformRect()->x
+		<< "," << sprites[i]->GetTransformRect()->y << ")-"	<< "-Index: " << sprites[i]->GetZIndex() << std::endl;
+	}
+	
+	std::cout << "___________________________________" << std::endl;
+	
+	if(spriteCount == 0)
+	{
+		sprites.insert(sprites.begin(),sta);
+	}
+	else
+	for (int i = 0 ; i<spriteCount ; i++)
+	{
+		if(i != spriteCount -1)
+		{
+			if((sta->GetZIndex() > sprites[i]->GetZIndex() &&
+				sta->GetZIndex() < sprites[i+1]->GetZIndex()) || 
+				sta->GetZIndex() == sprites[i]->GetZIndex() ||
+				sta->GetZIndex() == sprites[i+1]->GetZIndex())
+			{
+				sprites.insert(sprites.begin() + i + 1,sta);
+				break;
+			}
+		}
+		else
+		{
+			sprites.insert(sprites.begin() + i + 1,sta);
+			break;
+		}
+
+	}
+	
+	//sprites.push_back(sta);
 }
 
 void GameScene::DeleteSprite(Sprite* std)
@@ -416,7 +766,7 @@ void GameScene::DeleteSprite(Sprite* std)
 		{
 			if(blocks[i] == std)
 			{
-				blocks.erase(blocks.begin() + i);
+				blocks.erase(blocks.begin() +i);
 			}
 		}
 	}
@@ -434,3 +784,4 @@ void GameScene::goToScene(Scene*& activeScene)
 {
 	
 }
+

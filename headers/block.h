@@ -23,7 +23,7 @@ class Block : public Sprite
 	public:
 		Block(int x, int y, float scale,SpawnType spawnType = SpawnRandom);
 		void SetDesiredPos(int x, int y);
-
+		
 		virtual void Update(double deltaTime);
 		bool IsMoving();
 		int GetDesiredYPos();
