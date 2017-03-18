@@ -36,6 +36,7 @@ public:
 	virtual void exit();
 	virtual void goToScene(Scene*& activeScene);
 	
+	void ShuffleBlockPositions();
 	bool PreCalculatePositioning();
 	bool PreCalculateMoves();
 	void CalculatePositioning();

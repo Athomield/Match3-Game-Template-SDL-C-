@@ -130,6 +130,10 @@ void GameScene::CalculatePositioning()
 	{
 		for (int x = 0; x < gridWidth;x++)
 		{
+			if(GetBlockAt(x,y) != NULL)
+				if(GetBlockAt(x,y)->GetType() == Block::Type::Static)
+					continue;
+					
 			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
 			if(GetBlockAt(x,y) != NULL && GetBlockAt(x+1,y) != NULL && GetBlockAt(x+2,y) != NULL )
 			{
@@ -161,6 +165,10 @@ void GameScene::CalculatePositioning()
 	{
 		for (int y = 0; y < gridHeight; y++)
 		{
+			if(GetBlockAt(x,y) != NULL)
+				if(GetBlockAt(x,y)->GetType() == Block::Type::Static)
+					continue;
+					
 			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
 			if(GetBlockAt(x,y) != NULL && GetBlockAt(x,y+1) != NULL && GetBlockAt(x,y+2) != NULL )
 			{
@@ -197,8 +205,14 @@ void GameScene::update(double deltaTime)
 	
 	mGameMode.Update(deltaTime);
 	
-	if(!PreCalculateMoves())
-		std::cout << "No more moves !!" << std::endl;
+	if(doCalculations)
+	{	
+		if(!PreCalculateMoves())
+		{	
+			std::cout << "No more moves !!" << std::endl;
+			ShuffleBlockPositions();
+		}
+	}
 	
 	for(int i = 0; i < blocks.size();i++)
 	{
@@ -389,6 +403,10 @@ bool GameScene::PreCalculateMoves()
 		for (int x = 0; x < gridWidth;x++)
 		{
 			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
+			if(GetBlockAt(x,y) != NULL)
+				if(GetBlockAt(x,y)->GetType() == Block::Type::Static)
+					continue;
+			
 			if(GetBlockAt(x,y+1) != NULL)
 			{
 				if(GetBlockAt(x,y+1)->GetType() != Block::Type::Static)
@@ -399,6 +417,7 @@ bool GameScene::PreCalculateMoves()
 					{
 						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+2,y+1)->GetType())
 						{
+							std::cout << "Move " << x << "," << y << std::endl; 
 							return true;
 						}
 					}
@@ -409,6 +428,7 @@ bool GameScene::PreCalculateMoves()
 					{
 						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+1)->GetType())
 						{
+							std::cout << "Move " << x << "," << y << std::endl;
 							return true;
 						}
 					}
@@ -419,6 +439,7 @@ bool GameScene::PreCalculateMoves()
 					{
 						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-2,y+1)->GetType())
 						{
+							std::cout << "Move " << x << "," << y << std::endl;
 							return true;
 						}
 					}
@@ -437,6 +458,7 @@ bool GameScene::PreCalculateMoves()
 						{
 							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-2,y-1)->GetType())
 							{
+								std::cout << "Move " << x << "," << y << std::endl;
 								return true;
 							}
 						}
@@ -448,6 +470,7 @@ bool GameScene::PreCalculateMoves()
 						{
 							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+2,y-1)->GetType())
 							{
+								std::cout << "Move " << x << "," << y << std::endl;
 								return true;
 							}
 						}
@@ -458,6 +481,7 @@ bool GameScene::PreCalculateMoves()
 						{
 							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-1)->GetType())
 							{
+								std::cout << "Move " << x << "," << y << std::endl;
 								return true;
 							}
 						}
@@ -474,6 +498,7 @@ bool GameScene::PreCalculateMoves()
 					{
 						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-2,y)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-3,y)->GetType())
 						{
+							std::cout << "Move " << x << "," << y << std::endl;
 							return true;
 						}
 					}
@@ -488,6 +513,7 @@ bool GameScene::PreCalculateMoves()
 					{
 						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+2,y)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+3,y)->GetType())
 						{
+							std::cout << "Move " << x << "," << y << std::endl;
 							return true;
 						}
 					}
@@ -502,6 +528,10 @@ bool GameScene::PreCalculateMoves()
 		for (int y = 0; y < gridHeight; y++)
 		{
 			//std::cout << GetBlockAt(x,y)->GetXPos() << "," << GetBlockAt(x,y)->GetYPos() << std::endl;
+			if(GetBlockAt(x,y) != NULL)
+				if(GetBlockAt(x,y)->GetType() == Block::Type::Static)
+					continue;
+			
 			if(GetBlockAt(x+1,y) != NULL)
 			{
 				if(GetBlockAt(x+1,y)->GetType() != Block::Type::Static)
@@ -513,11 +543,12 @@ bool GameScene::PreCalculateMoves()
 					{
 						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+2)->GetType())
 						{
+							std::cout << "Move " << x << "," << y << std::endl;
 							return true;
 						}
 					}
 					
-					if(y-1 >= 0)
+					if(y-1 >= 0 && y-2 >= 0)
 					{
 						// *
 						//*
@@ -526,6 +557,7 @@ bool GameScene::PreCalculateMoves()
 						{
 							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-1)->GetType())
 							{
+								std::cout << "Move " << x << "," << y << std::endl;
 								return true;
 							}
 						}
@@ -537,6 +569,7 @@ bool GameScene::PreCalculateMoves()
 						{
 							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-2)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x+1,y-1)->GetType())
 							{
+								std::cout << "Move " << x << "," << y << std::endl;
 								return true;
 							}
 						}
@@ -555,11 +588,12 @@ bool GameScene::PreCalculateMoves()
 					{
 						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+2)->GetType())
 						{
+							std::cout << "Move " << x << "," << y << std::endl;
 							return true;
 						}
 					}
 					
-					if(y-1 >= 0)
+					if(y-1 >= 0 && y-2 >= 0)
 					{
 						//*
 						// *
@@ -568,6 +602,7 @@ bool GameScene::PreCalculateMoves()
 						{
 							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y+1)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-1)->GetType())
 							{
+								std::cout << "Move " << x << "," << y << std::endl;
 								return true;
 							}
 						}
@@ -579,6 +614,7 @@ bool GameScene::PreCalculateMoves()
 						{
 							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-2)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x-1,y-1)->GetType())
 							{
+								std::cout << "Move " << x << "," << y << std::endl;
 								return true;
 							}
 						}
@@ -599,6 +635,7 @@ bool GameScene::PreCalculateMoves()
 						{
 							if(GetBlockAt(x,y)->GetType() == GetBlockAt(x,y-2)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x,y-3)->GetType())
 							{
+								std::cout << "Move " << x << "," << y << std::endl;
 								return true;
 							}
 						}
@@ -618,6 +655,7 @@ bool GameScene::PreCalculateMoves()
 					{
 						if(GetBlockAt(x,y)->GetType() == GetBlockAt(x,y+2)->GetType() && GetBlockAt(x,y)->GetType() == GetBlockAt(x,y+3)->GetType())
 						{
+							std::cout << "Move " << x << "," << y << std::endl;
 							return true;
 						}
 					}
@@ -627,6 +665,53 @@ bool GameScene::PreCalculateMoves()
 	}
 	
 	return false;
+}
+
+void GameScene::ShuffleBlockPositions()
+{
+	std::vector<int> xPositions;
+	std::vector<int> yPositions;
+	
+	for(int i = 0; i < blocks.size(); i++)
+	{
+		if(blocks[i] != NULL)
+				if(blocks[i]->GetType() == Block::Type::Static)
+					continue;
+					
+		xPositions.push_back(blocks[i]->GetDesiredXPos());
+		yPositions.push_back(blocks[i]->GetDesiredYPos());
+	}
+
+	for(int x = 0; x < gridWidth; x++)
+	{
+		for(int y = 0; y < gridHeight; y++)
+		{
+			if(GetBlockAt(x,y) != NULL)
+				if(GetBlockAt(x,y)->GetType() == Block::Type::Static)
+					continue;
+					
+			srand(time(NULL));
+			int randomIndex = rand() % xPositions.size();
+			
+			while(!(yPositions[randomIndex] >=0))
+			{
+				randomIndex = rand() % xPositions.size();
+			}
+
+			Block* bl = GetBlockAt(x,y);
+			
+			if(bl != NULL)
+			{
+				bl->SetDesiredPos(xPositions[randomIndex],yPositions[randomIndex]);
+				
+				bl->GoToDesiredPos();
+				
+				xPositions.erase(xPositions.begin() + randomIndex);
+				yPositions.erase(yPositions.begin() + randomIndex);
+			}
+		}
+	}
+	
 }
 
 void GameScene::CheckBottomSides(Block* block) //if the block is empty and you must get
