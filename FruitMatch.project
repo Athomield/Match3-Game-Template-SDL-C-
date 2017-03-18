@@ -23,6 +23,8 @@
       <File Name="headers/scene.h"/>
       <File Name="headers/game_scene.h"/>
       <File Name="headers/landing_menu_scene.h"/>
+      <File Name="headers/game_mode.h"/>
+      <File Name="headers/label.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="resources/apple_block.png"/>
@@ -30,10 +32,15 @@
       <File Name="resources/empty_block.png"/>
       <File Name="resources/orange_block.png"/>
       <File Name="resources/resin_block.png"/>
+      <File Name="resources/KOMIKAB.ttf"/>
     </VirtualDirectory>
     <File Name="game_scene.cpp"/>
     <File Name="landing_menu_scene.cpp"/>
+    <File Name="game_mode.cpp"/>
+    <File Name="label.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -51,6 +58,7 @@
       <Linker Options="" Required="yes">
         <Library Value="SDL2"/>
         <Library Value="SDL2_image"/>
+        <Library Value="SDL2_ttf"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -127,6 +135,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
 </CodeLite_Project>

@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <stdio.h>
 #include <string>
@@ -24,8 +25,6 @@ class Window
 		int GetHeight();
 		static int height,width;
 private:
-
-		
 		const int mHeight = 640;
 		const int mWidth = 400;
 		SDL_Window* mWindow = NULL; //SDL window

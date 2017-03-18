@@ -13,8 +13,10 @@ class TextureLoader
 		static TextureLoader* Instance();
 		SDL_Texture* LoadTexture(std::string path);
 		void SetWindow(Window* window);
+		Window* GetWindow();
 	protected:
 		static TextureLoader* _instance;
+		TTF_Font* mFont;
 		Window* mWindow;
 };
 

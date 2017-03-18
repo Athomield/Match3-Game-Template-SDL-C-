@@ -44,6 +44,11 @@ void TextureLoader::SetWindow(Window* window)
 	mWindow = window;
 }
 
+Window* TextureLoader::GetWindow()
+{
+	return mWindow;
+}
+
 TextureLoader::TextureLoader()
 {
 	

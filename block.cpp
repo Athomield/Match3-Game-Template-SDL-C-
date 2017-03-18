@@ -30,7 +30,7 @@ Block::Block(int x, int y, float scale,SpawnType spawnType) : Sprite("../resourc
 		SetTexture("../resources/static_block.png");
 		mType = Static;
 	}
-	
+	mZIndex = Index_Normal;
 	mX = x;
 	mY = y;
 	desiredXPos = x;
@@ -91,12 +91,12 @@ void Block::Update(double deltaTime)
 	//mX = mX - mWidth*mXScaleFactor*4*sin(SDL_GetTicks()/100) * deltaTime;
 }
 
-int Block::GetDesiredXPos()
+int Block::GetDesiredXPos() //in pixels
 {
 	return desiredXPos;
 }
 
-int Block::GetDesiredYPos()
+int Block::GetDesiredYPos() //in pixels
 {
 	return desiredYPos;
 }
@@ -111,19 +111,19 @@ void Block::StartTiltRight()
 	isTiltRight = true;
 }
 
-void Block::SetDesiredPos(int x, int y)
+void Block::SetDesiredPos(int x, int y) // in pixels
 {
 	desiredXPos = x;
 	desiredYPos = y;
 }
 
-int Block::GetXPos()
+int Block::GetXPos() // in pixels
 {
 	int temp = (int)mX;
 	return temp;
 }
 
-int Block::GetYPos()
+int Block::GetYPos()// in pixels
 {
 	int temp = (int)mY;
 	return temp;
@@ -152,4 +152,10 @@ int Block::GetYCoord()
 int Block::GetXCoord()
 {
 	return (int)(mX/(int)(mWidth*mXScaleFactor));
+}
+
+void Block::GoToDesiredPos()
+{
+	mX = desiredXPos;
+	mY = desiredYPos;
 }

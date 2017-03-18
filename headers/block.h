@@ -11,7 +11,8 @@ class Block : public Sprite
 	public:
 		enum Type {Apple,Banana,Orange,Grape,Static};
 		enum SpawnType {SpawnRandom,SpawnStatic};
-	private:
+		
+private:
 		Type mType;
 		int desiredXPos, desiredYPos;
 		float mDropVelocity;
@@ -23,9 +24,10 @@ class Block : public Sprite
 	public:
 		Block(int x, int y, float scale,SpawnType spawnType = SpawnRandom);
 		void SetDesiredPos(int x, int y);
-
+		
 		virtual void Update(double deltaTime);
 		bool IsMoving();
+		void GoToDesiredPos();
 		int GetDesiredYPos();
 		int GetDesiredXPos();
 		int GetXPos();

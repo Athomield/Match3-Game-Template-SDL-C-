@@ -4,7 +4,9 @@
 #include "scene.h"
 #include <vector> 
 #include "sprite.h"
-#include "block.h"
+#include "label.h"
+//#include "block.h" included in game mode
+#include "game_mode.h"
 
 class GameScene : public Scene //main scene containing the actual game
 {
@@ -16,6 +18,14 @@ private:
 	Block* block2 = NULL;
 	SDL_Rect blocksOffset;
 	
+	GameMode mGameMode;
+	
+	Sprite* mBackgroundSprite;
+	
+	Label* scoreLabel = NULL;
+	Label* movesLabel = NULL;
+	Label* timerLabel = NULL;
+	
 public:
 	GameScene();
 	virtual ~GameScene();
@@ -26,7 +36,9 @@ public:
 	virtual void exit();
 	virtual void goToScene(Scene*& activeScene);
 	
+	void ShuffleBlockPositions();
 	bool PreCalculatePositioning();
+	bool PreCalculateMoves();
 	void CalculatePositioning();
 	Block* GetBlockAt(int x, int y);
 	void CheckBottomSides(Block* block);
